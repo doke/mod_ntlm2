@@ -23,7 +23,7 @@
 #ifdef __APPLE__
 #include <stdlib.h>
 #else
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 
 int SMBlib_errno;

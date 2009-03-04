@@ -17,7 +17,7 @@ mod_ntlm.so: mod_ntlm.c mod_ntlm.h ntlmssp.inc.c smbval/rfcnb-io.inc.c smbval/rf
 
 #   install the shared object file into Apache 
 install: all
-	$(APXS) -i -a -n 'ntlm' mod_ntlm.so
+	$(APXS) -i -a -n 'ntlm' .libs/mod_ntlm.so
 
 #   cleanup
 clean:

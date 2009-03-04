@@ -24,7 +24,7 @@
 #ifdef __APPLE__
 #include <stdlib.h>
 #else
-#include <malloc.h>
+#include <stdlib.h>
 #endif
 #include <string.h>
 

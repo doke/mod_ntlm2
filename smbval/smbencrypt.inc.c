@@ -19,10 +19,7 @@
 #include <arpa/inet.h>
 #include <dirent.h>
 #include <string.h>
-#ifdef __APPLE__
-#else
-#include <sys/vfs.h>
-#endif
+#include <sys/mount.h>
 #include <netinet/in.h>
 
 #include "smblib-priv.h"
