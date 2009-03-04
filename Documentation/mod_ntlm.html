@@ -1,0 +1,201 @@
+<html>
+<title>
+NTLM auth module for Apache/Unix
+</title>
+<body>
+<h1>
+NTLM auth module for Apache/Unix
+</h1>
+<p>
+Copyright (C) 2000 Andreas Gal
+(<a href="mailto:gal@users.sourceforge.net">gal@users.sourceforge.net</a>)<BR>
+Visit <a href="http://modntlm.sourceforge.net/">
+http://modntlm.sourceforge.net</a> for code updates.
+</p>
+
+<p>
+NTLM  is an authentication protocol used by
+<a href="http://www.microsoft.com/iis/">Microsoft Internet Informations
+Server(tm)</a>
+and
+<a href="http://www.microsoft.com/ie/">Microsoft Internet Explorer(tm)</a>.
+While it is not really secure, it offers background authentication (the
+workstation logon credentials of users are passed through to the web
+server). This feature is widely used in intranets based on these
+<a href="http://www.microsoft.com/">Microsoft</a> products.
+<p>
+
+<p>
+This module is implementing NTLM authentication for Apache on Unix
+platforms.  It is available free of charges under the BSD License.
+</p>
+
+<h2>Download</h2>
+The source code of 
+<a href="http://modntlm.sourceforge.net/">mod_ntlm</a> 
+is available for download through the 
+<a href="http://sourceforge.net/project/?group_id=4906">
+Sourceforge project page</a>.
+
+<h2>Install</h2>
+<p>
+You have to be root to compile and install mod_ntlm.c
+successfully. You need a ready-to-run apache distribution
+installed. Go to the source distribution directory of
+<a href="http://modntlm.sourceforge.net/">mod_ntlm</a> and enter:
+</p>
+<p><b>
+make install && make restart
+</b></p>
+<p>
+The Makefile is using apxs to compile and install mod_ntlm. Certain
+versions of apxs are known to fail under certain versions of 
+<a href="http://www.suse.com/">SuSE Linux</a>.<BR>
+It works fine for me with SuSE Linux 6.3 and Solaris 2.6, no other 
+platforms have been tested yet. 
+</p>
+
+<h2>Directives in http.conf</h2>
+<p>
+This directives can be placed into a virtual directory to
+configure <a href="http://modntlm.sourceforge.net/">mod_ntlm</a>:
+</p>
+<table>
+<tr><td><b>NTLMAuth</b> <i>on/off</i></td>
+<td>enable/disable NTLM authentication</td></tr>
+
+<tr><td><b>AuthNTGroups</b> <i>filename</i></td>
+<td>restrict access by looking up users in plain text group files (see
+<a href="#NT">below</a>)</td></tr>
+
+<tr><td><b>NTLMAuthoritative</b> <i>on/off</i></td>
+<td>allow users who couldn't be authenticated to be handled by other 
+authentication modules</td></tr>
+
+<tr><td><b>NTLMDomain</b> <i>domain_name</i></td>
+<td>Domain users should be authenticated against</td></tr>
+	     
+<tr><td><b>NTLMServer</b> <i>server_name or ip_addr</i></td>
+<td>Primary SMB server to authenticate users (Windows NT or Samba)</td></tr>
+
+<tr><td><b>NTLMBackup</b> <i>server_name or ip_addr</i></td>
+<td>Backup SMB server to authenticate users if primary is down</td></tr>
+
+<tr><td><b>NTLMBasicAuth</b> <i>on/off</i></td>
+<td>enable/disable Basic authentication in addition to NTLM
+authentication.  Note that setting NTLMAuth to off disables the Basic
+authentication of this module too.</td></tr>
+
+<tr><td><b>NTLMBasicRealm</b> <i>realm</i></td>
+<td>The realm to pass to the client for Basic authentication.</td></tr>
+
+<tr><td><b>Require valid-user<b></td>
+<td>Every user that is accepted by the SMB server can access this
+resource</td></tr>
+
+<tr><td><b>Require user</b> <i>user_name</i></td>
+<td>Only this specific user(s) are allowed. Specify one or multiple users
+separated by spaces</td></tr>
+
+</table>
+
+<p>
+Example configuration for httpd.conf:
+
+<pre>
+     AuthType NTLM
+     NTLMAuth on
+     NTLMAuthoritative on
+     NTLMDomain UWSPDOM
+     NTLMServer dc1
+     NTLMBackup dc2
+     Require user agal
+</pre>
+
+<h2>Comments, Limitations</h2>
+
+<ul>
+<li>Internet Explorer 3.0 (broken keepalive) is not supported, it's
+about time to get a new browsers. Those users should have taken their
+computers away for using year old software.</li>
+
+<li>You can produce a problem by pressing <b>reload</b> fast and
+often. The connection is forced into reset each time, and sometimes
+Internet Explorer is sending a <b>msg3</b> to an apache process that
+didn't send the <b>msg1</b> yet.  I'm not sure weather this is an
+apache or Linux or IE problem. It could be resolved by caching
+credentials, which is unsafe and involves neat things like file
+locking and mmap().</li>
+</ul>
+
+<h2><a name="NT">AuthNTGroups</a></h2>
+So far it is not possible to use group authentication with mod_ntlm,
+see section <i>Limitations</i> below.  This patched version implements
+a first (and very basic) group authentication to use with <tt>require
+group</tt> directive.  To achieve this I (Markus Rietzler) have
+"borrowed" some code from the original mod_auth.c module, which comes
+with apache source (see my comments <tt>/* rit, ... */</tt> in
+mod_ntlm.c).<p>
+
+Now you can use the following configuration options:
+
+<pre>
+     AuthType NTLM
+     AuthNTGroups <i>/usr/local/apache/conf/ntgroup</i>
+     NTLMAuth on
+     NTLMAuthoritative on
+     NTLMDomain UWSPDOM
+     NTLMServer dc1
+     NTLMBackup dc2
+     Require group admi
+</pre>
+
+The user-group-definition will be done in
+<tt>/usr/local/apache/conf/ntgroup</tt> (at the moment) by hand (!)
+
+<pre>
+     admi: joe jane
+     office: jim jeff
+</pre>
+
+The authentication process will work in two steps:
+<ol>
+<li>check the user against DC
+<li>if user is authenticated via DC, check whether user is member of
+group <i>admi</i>
+</ol>
+
+After successful authentication via <tt>require group</tt>, there will
+be a new environment variable: <tt>REMOTE_NTGROUP</tt>.<p>
+
+At the moment it is necessary to handle the group settings
+manually. With the new Samba TNG branch you can use <i>samedit</i> to
+receive all the required information (e.g. all nt-groups and all the
+users in one group). At the moment we are working on an automatic
+export of all of the nt-groups (and users) via some shell or perl
+script...<p>
+
+Tested with: apache 2.0.40 (with mod_so, mod_expire, mod_perl) under
+hp-ux 11.0.<p>
+
+<p>Markus Rietzler, <br>
+eMail: <a href="mailto:markus.rietzler@wuppertal-navigator.de">markus.rietzler@wuppertal-navigator.de</a> or <a href="mailto:markus.rietzler@rzf.fin-nrw.de">markus.rietzler@rzf.fin-nrw.de</a><br>
+Oct 2000
+<h2>Bugs, missing features</h2>
+<ul>
+<li>not enough tested</li>
+
+<li>autoconf has to be done</li>
+
+<li>test on more platforms</li>
+
+<li>figure out how to fetch user groups from the DC (well, wait untill
+SAMBA_TNG is able to do that and then borrow the code)</li>
+</ul>
+
+<h2>Feedback</h2>
+
+Any kind of feedback is appreciated. I'm interessted in bug reports
+but also success stories.
+
+</body>

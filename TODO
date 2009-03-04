@@ -1,0 +1,13 @@
+SHH 2000-05-11
+  * When falling back to Basic authentication, allow the user to
+    specify "DOMAIN\USERNAME" or "DOMAIN/USERNAME" in addition to just
+    "USERNAME".  Extract the DOMAIN, and compare it to the domain
+    served.
+
+  * Look for, and fix security holes.  The code seems to be a real
+    patchwork from several sources, so I guess there are more bugs in
+    there.  We better find the holes before anyone else does.
+
+-------------------------------------------------------------------------------
+$Id: TODO 20 2004-05-03 17:25:39Z cardoe $
+-------------------------------------------------------------------------------

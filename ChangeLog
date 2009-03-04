@@ -1,0 +1,108 @@
+2003-02-23 Carlos Sepulveda (casz69(at)yahoo.com)
+
+        * Make branch mod_ntlm2, and porting to Apache2.
+
+        * change to version mod_ntlm2-0.1
+
+2003-02-20 Carlos Sepulveda (casz69(at)yahoo.com)
+
+	* replace version at sf.net (0.3) with mod_ntlm-0.3.fhz-3
+          This version was get from http://perso.club-internet.fr/hernanf/
+          (thanks to Franck Hernandez)
+
+        * change version number : mod_ntlm-0.4
+
+2003-02-16 Franck Hernandez (hernanf(at)club-internet.fr)
+
+	* changed version number : mod_ntlm-0.3.fhz-3
+
+2003-01-12 Franck Hernandez (hernanf(at)club-internet.fr)
+	
+	* mod_ntlm.c : correct a memory allocation bug in Basic authentication
+	(thanks to scott armstrong (scottbird7(at)hotmail.com)
+
+2002-10-19 Franck Hernandez (hernanf(at)club-internet.fr)
+
+	* ntlmssp.inc.c : NTLM dialog enhanced => better support for some IE
+	versions (thanks to Jeremy C. Reed reed(at)reedmedia.net )
+
+2002-03-30  Franck Hernandez (hernanf(at)club-internet.fr)
+
+	* mod_ntlm.c ntlmssp.inc.c : use standard apache api to deal with 
+	AuthNTGroups (thanks to Terje Bless (link(at)pobox.com)
+	
+2001-09-04 Franck Hernandez <hernanf(at)club-internet.fr>
+
+        * mod_ntlm.c and ntlmssp.inc.c:
+        Windows 9x now can authenticate against mod_ntlm
+        (support for old lm (LanManager)protocol implemented)
+
+2000-10-25  Sverre H. Huseby  <shh(at)thathost.com>
+
+	* Documentation/mod_ntlm.html: Added docs from Markus regarding NT
+	groups.
+
+2000-10-18  Sverre H. Huseby  <shh(at)thathost.com>
+
+	* mod_ntlm.c: Included patches from Markus.Rietzler(at)rzf.fin-nrw.de
+	to support NT groups.
+
+2000-07-11  Sverre H. Huseby  <shh(at)thathost.com>
+
+	* ntlmssp.inc.c: Disabled two `unsigned char data[0]' in the
+	structs, as they failed to compile on HP/UX, and were not used
+	anyway.  Thanks to Markus.Rietzler(at)rzf.fin-nrw.de for reporting
+	this.  Please note that using structs for passing binary data
+	across different platforms is a BAD THING.  Someone should rewrite
+	this stuff.
+
+2000-05-27  Sverre H. Huseby  <sverrehu(at)online.no>
+
+	* Documentation/mod_ntlm.html: Added description of the Basic
+	authentication settings.
+
+2000-05-23  Sverre H. Huseby  <sverrehu(at)online.no>
+
+	* mod_ntlm.c: Added optional support for using Apache's built in
+	ap_base64decode/encode rather than the inline copy used
+	previously.  If it works as expected, we may remove the old code
+	later.  Look for the USE_APACHE_PROVIDED_UU_FUNCTIONS macro.
+
+	* ntlmssp.inc.c: added different return values to the
+	ntlm_msgX_getXXX functions, to be able to spot which one is
+	troublesome.
+
+2000-05-16  Sverre H. Huseby  <sverrehu(at)online.no>
+
+	* Restructured everything so that all *.c files (renamed from
+	.c to .inc.c) are #include'd rather than linked.  Made every
+	function and variable static.  This way we don't pollute the
+	name space inside Apache.
+
+	* Encapsulated all .h files in #ifdef's, to be able to include
+	several times without redefining anything.
+
+	* Ran GNU indent on all files, to have consistent look.  Did
+	some manual cleanup, and expanded all tabs to spaces.
+
+	* Removed lots of unused functions and variables.
+
+	* Removed md4.c, config.h and smblib.h
+
+2000-05-11  Sverre H. Huseby  <sverrehu(at)online.no>
+
+	* mod_ntlm.c: Implemented optional authentication using Basic in
+	addition to NTLM, so that other browsers than MSIE will be able to
+	connect too.
+	
+	Fixed a bug causing a failed authentication to succeed if the user
+	reloaded the page (!).  To solve this problem, the variable
+	auth_ok was added to ntlm_connect_rec.
+
+	* ntlmssp.h: function ntlm_msg3_gethostname failed at my place,
+	causing the entire authentication to fail.  As I couldn't see any
+	utilisation of the hostname anywhere, I made this function return
+	0 even if it fails.  This should probably be looked into, and be
+	fixed the "correct" way.
+
+$Id: ChangeLog 20 2004-05-03 17:25:39Z cardoe $
