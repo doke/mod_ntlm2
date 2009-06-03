@@ -3,11 +3,11 @@
  *
  */
 
-#define MAX_HOSTLEN 32
-#define MAX_DOMLEN 32
+#define MAX_HOSTLEN 64
+#define MAX_DOMLEN 64
 #define MAX_USERLEN 64
-#define RESP_LEN 24
-#define NONCE_LEN 8
+#define RESP_LEN 48
+#define NONCE_LEN 16
 
 /* fhz, 01-10-15 : borrowed from samba code */
 /* NTLMSSP negotiation flags */
