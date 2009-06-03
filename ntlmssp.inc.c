@@ -5,7 +5,7 @@
 
 #define MAX_HOSTLEN 32
 #define MAX_DOMLEN 32
-#define MAX_USERLEN 32
+#define MAX_USERLEN 64
 #define RESP_LEN 24
 #define NONCE_LEN 8
 
